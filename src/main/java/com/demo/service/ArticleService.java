@@ -28,6 +28,10 @@ public class ArticleService {
 		String body = "";
 		String source = "";
 		
+		// タスク
+		// 以下のスクレイピングはメソッド化して、サービスのロジックからは切り離したい
+		// （同じ記事がピックされた時の処理）
+		
 		// 画像ソースの取得
 		Elements imgElements = document.getElementsByAttributeValue("property", "og:image");
 		if (imgElements != null) {
@@ -50,7 +54,8 @@ public class ArticleService {
 			title = "記事タイトルを取得できませんでした。";
 		}
 		
-		// 本文の取得
+		// 本文の取得[
+		// 文字数制限の追加 - なぜかよきに計らってくれている
 		Elements bodyElements = document.select("p");
 		if (bodyElements != null) {
 			body = bodyElements.first().text();
@@ -61,7 +66,7 @@ public class ArticleService {
 		// ソース
 		Elements sourceElements = document.getElementsByAttributeValue("property", "og:site_name");
 		if (sourceElements != null) {
-			source = imgElements.first().attr("content");
+			source = sourceElements.first().attr("content");
 		} else {
 			source = url;
 		}
