@@ -55,7 +55,15 @@ public class ArticleService {
 		}
 		
 		// 本文の取得[
-		// 文字数制限の追加 - なぜかよきに計らってくれている
+		// 文字数制限の追加 - なぜかよきに計らってくれている。 Rails でのロジックは以下
+//	    if page.search('p')
+//	      texts = page.search('p')
+//	      i = 0
+//	      while texts[i] && results[:body].length <= 40
+//	        results[:body] += texts[i]
+//	        i += 1
+//	      end
+//	    end
 		Elements bodyElements = document.select("p");
 		if (bodyElements != null) {
 			body = bodyElements.first().text();
