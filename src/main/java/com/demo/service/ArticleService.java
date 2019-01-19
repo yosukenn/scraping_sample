@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.demo.domain.Article;
 import com.demo.repository.ArticleRepository;
 
+/**
+ * ニュース記事に関するサービスクラス
+ * @author yosukenn
+ *
+ */
 @Service
 @Transactional
 public class ArticleService {
@@ -20,27 +24,28 @@ public class ArticleService {
 	ArticleRepository articleRepository;
 	
 	public Article createArticle(String url) throws IOException {
+		Article article = getNewsInfo(url);
+		return articleRepository.save(article);
+	}
+	
+	private Article getNewsInfo(String url) throws IOException {
 		// 渡されたURLのHTML情報を取得
 		Document document = Jsoup.connect(url).get();
-		// Article の各フィールドに代入する変数を宣言して初期化
-		String imageUrl = "";
-		String title = "";
-		String body = "";
-		String source = "";
-		
+
 		// タスク
-		// 以下のスクレイピングはメソッド化して、サービスのロジックからは切り離したい
 		// （同じ記事がピックされた時の処理）
 		
 		// 画像ソースの取得
-		Elements imgElements = document.getElementsByAttributeValue("property", "og:image");
-		if (imgElements != null) {
+		String imageUrl;
+		if (document.getElementsByAttributeValue("property", "og:image") != null) {
+			Elements imgElements = document.getElementsByAttributeValue("property", "og:image");
 			imageUrl = imgElements.first().attr("content");
 		} else {
 			imageUrl = "https://lh3.googleusercontent.com/VVhNlcQA_r1FP-T09tiSPdASiiBAYsQ7jw0StynJmoIzqy1BxteCOJtlh_fXzl-_JCUNj0inwj-MM7-EYgeR3ObcihckA-FjK_CUrmGzIsEGYJfiyBhOH4JDftzEfPEFxFm-3ycY4lQ=w853-h570-no";
 		}
 		
 		// タイトルの取得
+		String title;
 		if ( document.getElementsByAttributeValue("property", "og:title") != null) {
 			Elements titleElements = document.getElementsByAttributeValue("property", "og:title");
 			title = titleElements.attr("content");
@@ -65,6 +70,7 @@ public class ArticleService {
 //	      end
 //	    end
 		Elements bodyElements = document.select("p");
+		String body;
 		if (bodyElements != null) {
 			body = bodyElements.first().text();
 		} else {
@@ -73,12 +79,12 @@ public class ArticleService {
 		
 		// ソース
 		Elements sourceElements = document.getElementsByAttributeValue("property", "og:site_name");
+		String source;
 		if (sourceElements != null) {
 			source = sourceElements.first().attr("content");
 		} else {
 			source = url;
 		}
-		
 		
 		Article article = new Article();
 		article.setUrl(url);
@@ -87,6 +93,6 @@ public class ArticleService {
 		article.setBody(body);
 		article.setSource(source);
 		
-		return articleRepository.save(article);
+		return article;
 	}
 }
