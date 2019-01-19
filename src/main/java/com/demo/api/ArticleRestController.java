@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.domain.Article;
 import com.demo.service.ArticleService;
 
+/**
+ * リクエストに対応する処理のエンドポイントとなるコントローラ
+ * @author yosukenn
+ *
+ */
 @RestController
 @RequestMapping("api/articles")
 public class ArticleRestController {

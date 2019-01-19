@@ -23,11 +23,23 @@ public class ArticleService {
 	@Autowired
 	ArticleRepository articleRepository;
 	
+	/**
+	 * ユーザが入力したニュース記事のURLから記事オブジェクトを生成する業務ロジック
+	 * @param url ユーザが入力したニュース記事のURL
+	 * @return 生成した記事オブジェクト
+	 * @throws IOException
+	 */
 	public Article createArticle(String url) throws IOException {
 		Article article = getNewsInfo(url);
 		return articleRepository.save(article);
 	}
 	
+	/**
+	 * URLからニュース記事の情報をスクレイピングしてくるメソッド
+	 * @param url ユーザが入力したURL
+	 * @return スクレイピングした記事情報から生成した記事オブジェクト
+	 * @throws IOException
+	 */
 	private Article getNewsInfo(String url) throws IOException {
 		// 渡されたURLのHTML情報を取得
 		Document document = Jsoup.connect(url).get();
